@@ -16,7 +16,6 @@ export class EmZ3 {
         } catch(e) {
             errlines = e.stack.split("\n");
         }
-        console.log(errlines)
         for (var i = 0; i < errlines.length; i++) {
             var match = /((?:https?|file):\/\/.+\/)z3.js/.exec(errlines[i]);
             if (match) {
@@ -31,9 +30,6 @@ export class EmZ3 {
                 break;
             }
         }
-        // if (!prefixUrl) {
-        //     throw 'Could not determine em-z3 uri' + errlines;
-        // }
 
         var self = this,
             request = new XMLHttpRequest(),
@@ -45,9 +41,9 @@ export class EmZ3 {
                 var preJs = new XMLHttpRequest();
                 preJs.open("GET", urlprefix + "pre.z3.emscripten.js", false); // be synchronous
                 preJs.send();
-                debugger
                 eval(preJs.responseText + ";" + request.responseText);
                 self.FS = FS;
+                self.Module = Module;
             }
         };
         request.open("GET", urlprefix + "z3.emscripten.js", false); // be synchronous
