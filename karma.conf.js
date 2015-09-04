@@ -16,7 +16,13 @@ module.exports = function(config) {
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
         logLevel: config.LOG_INFO,
         autoWatch: true,
-        browsers: [],
+        browsers: ["Chrome"],
+        customLaunchers: {
+            Chrome_Travis_CI: {
+                base: 'Chrome',
+                flags: ['--no-sandbox']
+            }
+        },
         singleRun: false,
         preprocessors: {
             "z3.js": ["browserify"],
@@ -27,4 +33,8 @@ module.exports = function(config) {
             transform: ['babelify']
         },
     });
+
+    if (process.env.TRAVIS) {
+        config.browsers = ['Chrome_Travis_CI'];
+    }
 };
