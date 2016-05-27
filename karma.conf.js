@@ -4,7 +4,7 @@ module.exports = function(config) {
         files: [
             'node_modules/babelify/node_modules/babel-core/browser-polyfill.js',
             "z3.js",
-            "tests.js",
+            "z3-test.js",
             {pattern: "compiled/*", included: false},
         ],
         proxies: {

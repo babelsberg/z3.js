@@ -30,24 +30,23 @@ export class EmZ3 {
                 break;
             }
         }
-
-        var self = this,
-            request = new XMLHttpRequest(),
-            // urlprefix = prefixUrl
-            urlprefix = "./compiled/";
-        request.onreadystatechange = function () {
-            var DONE = request.DONE || 4;
-            if (request.readyState === DONE){
-                var preJs = new XMLHttpRequest();
-                preJs.open("GET", urlprefix + "pre.z3.emscripten.js", false); // be synchronous
-                preJs.send();
-                eval(preJs.responseText + ";" + request.responseText);
-                self.FS = FS;
-                self.Module = Module;
-            }
-        };
-        request.open("GET", urlprefix + "z3.emscripten.js", false); // be synchronous
-        request.send();
+        var urlprefix = `${prefixUrl}/compiled`;
+        Promise.all([
+          fetch(`${urlprefix}/z3.emscripten.js`).then((response) => response.text()),
+          fetch(`${urlprefix}/z3.emscripten.js.mem`).then((response) => response.arrayBuffer())
+        ]).then((values) => {
+          var z3em = values[0],
+              memory = values[1];
+          eval(`var Module = {
+              TOTAL_MEMORY: 128 * 1024 * 1024,
+              memoryInitializerRequest: {response: memory},
+              arguments: ["-smt2", "problem.smt2"],
+              noInitialRun: true,
+              noExitRuntime: true
+          }; ` + z3em);
+        })
+        self.FS = FS;
+        self.Module = Module;
     }
 
     run(code) {
